@@ -1,0 +1,331 @@
+[
+    {
+        "Model": "Logistic Regression",
+        "Type": "Comparison",
+        "Features": [
+            "daily_crime_count",
+            "violent_crime_count",
+            "crime_count_7d",
+            "crime_count_30d"
+        ],
+        "Metrics": {
+            "Accuracy": 0.5539535931516107,
+            "Precision": 0.0992063492063492,
+            "Sensitivity": 0.5494505494505495,
+            "Specificity": 0.5543558282208589,
+            "F1 Score": 0.16806722689075632,
+            "ROC-AUC": 0.5682602979842244,
+            "PR-AUC": 0.1004991693468203,
+            "MCC": 0.05720270471055184,
+            "Cohen's Kappa": 0.03385139909413604,
+            "Log Loss": 0.6991701249057103,
+            "True Negatives": 2259,
+            "False Positives": 1816,
+            "False Negatives": 164,
+            "True Positives": 200
+        },
+        "Confusion_Matrix": [
+            [
+                2259,
+                1816
+            ],
+            [
+                164,
+                200
+            ]
+        ],
+        "Configuration": {},
+        "Signal_Summary": {}
+    },
+    {
+        "Model": "Decision Tree",
+        "Type": "Comparison",
+        "Features": [
+            "daily_crime_count",
+            "violent_crime_count",
+            "crime_count_7d",
+            "crime_count_30d"
+        ],
+        "Metrics": {
+            "Accuracy": 0.6848389276864159,
+            "Precision": 0.0979020979020979,
+            "Sensitivity": 0.34615384615384615,
+            "Specificity": 0.7150920245398773,
+            "F1 Score": 0.15263476680799515,
+            "ROC-AUC": 0.5536492954897863,
+            "PR-AUC": 0.09639214567812632,
+            "MCC": 0.03703470875088752,
+            "Cohen's Kappa": 0.028425559849389548,
+            "Log Loss": 0.725834369033681,
+            "True Negatives": 2914,
+            "False Positives": 1161,
+            "False Negatives": 238,
+            "True Positives": 126
+        },
+        "Confusion_Matrix": [
+            [
+                2914,
+                1161
+            ],
+            [
+                238,
+                126
+            ]
+        ],
+        "Configuration": {},
+        "Signal_Summary": {}
+    },
+    {
+        "Model": "Random Forest",
+        "Type": "Comparison",
+        "Features": [
+            "daily_crime_count",
+            "violent_crime_count",
+            "crime_count_7d",
+            "crime_count_30d"
+        ],
+        "Metrics": {
+            "Accuracy": 0.6879927911691822,
+            "Precision": 0.09707971586424625,
+            "Sensitivity": 0.33791208791208793,
+            "Specificity": 0.7192638036809816,
+            "F1 Score": 0.1508277130594727,
+            "ROC-AUC": 0.5481726555652936,
+            "PR-AUC": 0.09703444775434147,
+            "MCC": 0.03473541942304991,
+            "Cohen's Kappa": 0.026848346524719013,
+            "Log Loss": 0.6889272743398377,
+            "True Negatives": 2931,
+            "False Positives": 1144,
+            "False Negatives": 241,
+            "True Positives": 123
+        },
+        "Confusion_Matrix": [
+            [
+                2931,
+                1144
+            ],
+            [
+                241,
+                123
+            ]
+        ],
+        "Configuration": {},
+        "Signal_Summary": {}
+    },
+    {
+        "Model": "Extra Trees",
+        "Type": "Comparison",
+        "Features": [
+            "daily_crime_count",
+            "violent_crime_count",
+            "crime_count_7d",
+            "crime_count_30d"
+        ],
+        "Metrics": {
+            "Accuracy": 0.6848389276864159,
+            "Precision": 0.0979020979020979,
+            "Sensitivity": 0.34615384615384615,
+            "Specificity": 0.7150920245398773,
+            "F1 Score": 0.15263476680799515,
+            "ROC-AUC": 0.55375379222005,
+            "PR-AUC": 0.09667894635548065,
+            "MCC": 0.03703470875088752,
+            "Cohen's Kappa": 0.028425559849389548,
+            "Log Loss": 0.718983788082692,
+            "True Negatives": 2914,
+            "False Positives": 1161,
+            "False Negatives": 238,
+            "True Positives": 126
+        },
+        "Confusion_Matrix": [
+            [
+                2914,
+                1161
+            ],
+            [
+                238,
+                126
+            ]
+        ],
+        "Configuration": {},
+        "Signal_Summary": {}
+    },
+    {
+        "Model": "HistGradientBoosting",
+        "Type": "Comparison",
+        "Features": [
+            "daily_crime_count",
+            "violent_crime_count",
+            "crime_count_7d",
+            "crime_count_30d"
+        ],
+        "Metrics": {
+            "Accuracy": 0.5782833971615229,
+            "Precision": 0.09199134199134198,
+            "Sensitivity": 0.46703296703296704,
+            "Specificity": 0.5882208588957055,
+            "F1 Score": 0.15370705244122965,
+            "ROC-AUC": 0.5552116901503404,
+            "PR-AUC": 0.09703510452921105,
+            "MCC": 0.030753331069597788,
+            "Cohen's Kappa": 0.019344033390750193,
+            "Log Loss": 0.6945807661790736,
+            "True Negatives": 2397,
+            "False Positives": 1678,
+            "False Negatives": 194,
+            "True Positives": 170
+        },
+        "Confusion_Matrix": [
+            [
+                2397,
+                1678
+            ],
+            [
+                194,
+                170
+            ]
+        ],
+        "Configuration": {},
+        "Signal_Summary": {}
+    },
+    {
+        "Model": "XGBoost",
+        "Type": "Comparison",
+        "Features": [
+            "daily_crime_count",
+            "violent_crime_count",
+            "crime_count_7d",
+            "crime_count_30d"
+        ],
+        "Metrics": {
+            "Accuracy": 0.6762784410903356,
+            "Precision": 0.10052122114668652,
+            "Sensitivity": 0.3708791208791209,
+            "Specificity": 0.703558282208589,
+            "F1 Score": 0.15817223198594024,
+            "ROC-AUC": 0.5532484999662914,
+            "PR-AUC": 0.09626419482903009,
+            "MCC": 0.044459771818070225,
+            "Cohen's Kappa": 0.03346016292635279,
+            "Log Loss": 0.6988949357390107,
+            "True Negatives": 2867,
+            "False Positives": 1208,
+            "False Negatives": 229,
+            "True Positives": 135
+        },
+        "Confusion_Matrix": [
+            [
+                2867,
+                1208
+            ],
+            [
+                229,
+                135
+            ]
+        ],
+        "Configuration": {},
+        "Signal_Summary": {}
+    },
+    {
+        "Model": "MLP Neural Network",
+        "Type": "Comparison",
+        "Features": [
+            "daily_crime_count",
+            "violent_crime_count",
+            "crime_count_7d",
+            "crime_count_30d"
+        ],
+        "Metrics": {
+            "Accuracy": 0.6368551475557558,
+            "Precision": 0.09897172236503857,
+            "Sensitivity": 0.4230769230769231,
+            "Specificity": 0.6559509202453988,
+            "F1 Score": 0.16041666666666668,
+            "ROC-AUC": 0.5618597047124655,
+            "PR-AUC": 0.09973080257006363,
+            "MCC": 0.04544305405889991,
+            "Cohen's Kappa": 0.031724011760579485,
+            "Log Loss": 0.6789884277894002,
+            "True Negatives": 2673,
+            "False Positives": 1402,
+            "False Negatives": 210,
+            "True Positives": 154
+        },
+        "Confusion_Matrix": [
+            [
+                2673,
+                1402
+            ],
+            [
+                210,
+                154
+            ]
+        ],
+        "Configuration": {},
+        "Signal_Summary": {}
+    },
+    {
+        "Model": "GARUDA Hybrid",
+        "Type": "Proposed",
+        "Features": [
+            "daily_crime_count",
+            "violent_crime_count",
+            "crime_count_7d",
+            "crime_count_30d",
+            "temporal_consistency",
+            "anomaly_score",
+            "spatial_signal"
+        ],
+        "Metrics": {
+            "Accuracy": 0.8947961252534354,
+            "Precision": 0.12408759124087591,
+            "Sensitivity": 0.046703296703296704,
+            "Specificity": 0.9705521472392638,
+            "F1 Score": 0.06786427145708583,
+            "ROC-AUC": 0.524847637025551,
+            "PR-AUC": 0.09825584677000665,
+            "MCC": 0.027374434034662543,
+            "Cohen's Kappa": 0.024098450101049718,
+            "Log Loss": 0.5571914363594099,
+            "True Negatives": 3955,
+            "False Positives": 120,
+            "False Negatives": 347,
+            "True Positives": 17
+        },
+        "Confusion_Matrix": [
+            [
+                3955,
+                120
+            ],
+            [
+                347,
+                17
+            ]
+        ],
+        "Configuration": {
+            "ml_weight": 0.4,
+            "temporal_weight": 0.2,
+            "anomaly_weight": 0.2,
+            "spatial_weight": 0.2,
+            "low_threshold": 0.33,
+            "high_threshold": 0.66,
+            "scale_pos_weight": 11.736728837876614,
+            "anomaly_contamination": 0.2,
+            "spatial_eps": 0.02,
+            "spatial_min_samples": 5
+        },
+        "Signal_Summary": {
+            "mean_ml_probability": 0.4973323835360755,
+            "mean_temporal_signal": 0.08058443021272486,
+            "mean_anomaly_signal": 0.20657805812119848,
+            "mean_spatial_signal": 0.6908083296198427,
+            "mean_consensus_score": 0.3945271170051835,
+            "min_consensus_score": 0.17834769496082392,
+            "max_consensus_score": 0.7672706518481496,
+            "p95_consensus_score": 0.6388416190067844,
+            "high_risk_predictions": 137,
+            "test_rows": 4439
+        }
+    }
+]

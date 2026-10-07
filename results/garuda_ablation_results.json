@@ -1,0 +1,346 @@
+[
+    {
+        "experiment": "E1 \u2014 ML Only",
+        "features": [
+            "daily_crime_count",
+            "violent_crime_count",
+            "crime_count_7d",
+            "crime_count_30d"
+        ],
+        "metrics": {
+            "Accuracy": 0.6762784410903356,
+            "Precision": 0.10052122114668652,
+            "Sensitivity": 0.3708791208791209,
+            "Recall": 0.3708791208791209,
+            "Specificity": 0.703558282208589,
+            "F1 Score": 0.15817223198594024,
+            "ROC-AUC": 0.5532484999662914,
+            "PR-AUC": 0.09626419482903009,
+            "MCC": 0.044459771818070225,
+            "Cohen's Kappa": 0.03346016292635279,
+            "Log Loss": 0.6988949360520242,
+            "True Negatives": 2867,
+            "False Positives": 1208,
+            "False Negatives": 229,
+            "True Positives": 135
+        },
+        "confusion_matrix": [
+            [
+                2867,
+                1208
+            ],
+            [
+                229,
+                135
+            ]
+        ],
+        "spatial_stats": {},
+        "scale_pos_weight": 11.736728837876614
+    },
+    {
+        "experiment": "E2 \u2014 ML + Temporal",
+        "features": [
+            "daily_crime_count",
+            "violent_crime_count",
+            "crime_count_7d",
+            "crime_count_30d",
+            "temporal_consistency"
+        ],
+        "metrics": {
+            "Accuracy": 0.5363820680333409,
+            "Precision": 0.0958969465648855,
+            "Sensitivity": 0.5521978021978022,
+            "Recall": 0.5521978021978022,
+            "Specificity": 0.5349693251533743,
+            "F1 Score": 0.16341463414634147,
+            "ROC-AUC": 0.5498041529023123,
+            "PR-AUC": 0.09553140711452514,
+            "MCC": 0.04790550786760185,
+            "Cohen's Kappa": 0.02752699261192093,
+            "Log Loss": 0.6924517595369925,
+            "True Negatives": 2180,
+            "False Positives": 1895,
+            "False Negatives": 163,
+            "True Positives": 201
+        },
+        "confusion_matrix": [
+            [
+                2180,
+                1895
+            ],
+            [
+                163,
+                201
+            ]
+        ],
+        "spatial_stats": {},
+        "scale_pos_weight": 11.736728837876614
+    },
+    {
+        "experiment": "E3 \u2014 ML + Anomaly",
+        "features": [
+            "daily_crime_count",
+            "violent_crime_count",
+            "crime_count_7d",
+            "crime_count_30d",
+            "anomaly_score"
+        ],
+        "metrics": {
+            "Accuracy": 0.6810092363144853,
+            "Precision": 0.10151515151515152,
+            "Sensitivity": 0.36813186813186816,
+            "Recall": 0.36813186813186816,
+            "Specificity": 0.708957055214724,
+            "F1 Score": 0.15914489311163896,
+            "ROC-AUC": 0.5530206296770714,
+            "PR-AUC": 0.09654051802999201,
+            "MCC": 0.04627131324585467,
+            "Cohen's Kappa": 0.03510606485776868,
+            "Log Loss": 0.6976321369307434,
+            "True Negatives": 2889,
+            "False Positives": 1186,
+            "False Negatives": 230,
+            "True Positives": 134
+        },
+        "confusion_matrix": [
+            [
+                2889,
+                1186
+            ],
+            [
+                230,
+                134
+            ]
+        ],
+        "spatial_stats": {},
+        "scale_pos_weight": 11.736728837876614
+    },
+    {
+        "experiment": "E4 \u2014 ML + Spatial",
+        "features": [
+            "daily_crime_count",
+            "violent_crime_count",
+            "crime_count_7d",
+            "crime_count_30d",
+            "spatial_signal"
+        ],
+        "metrics": {
+            "Accuracy": 0.6888938950214012,
+            "Precision": 0.10180109631949882,
+            "Sensitivity": 0.35714285714285715,
+            "Recall": 0.35714285714285715,
+            "Specificity": 0.7185276073619632,
+            "F1 Score": 0.15843997562461914,
+            "ROC-AUC": 0.5560193487494102,
+            "PR-AUC": 0.09596888024418847,
+            "MCC": 0.04586321726396196,
+            "Cohen's Kappa": 0.035325425434199476,
+            "Log Loss": 0.6877654827161342,
+            "True Negatives": 2928,
+            "False Positives": 1147,
+            "False Negatives": 234,
+            "True Positives": 130
+        },
+        "confusion_matrix": [
+            [
+                2928,
+                1147
+            ],
+            [
+                234,
+                130
+            ]
+        ],
+        "spatial_stats": {
+            "clusters": 273,
+            "noise_rate": 0.06550267530273163,
+            "train_signal_rate": 0.9219375019015574,
+            "test_signal_rate": 0.9243073096700412,
+            "train_signal_std": 0.2682698734244796,
+            "test_signal_std": 0.2645057158271507
+        },
+        "scale_pos_weight": 11.736728837876614
+    },
+    {
+        "experiment": "E5 \u2014 ML + Temporal + Anomaly",
+        "features": [
+            "daily_crime_count",
+            "violent_crime_count",
+            "crime_count_7d",
+            "crime_count_30d",
+            "temporal_consistency",
+            "anomaly_score"
+        ],
+        "metrics": {
+            "Accuracy": 0.6116242396936247,
+            "Precision": 0.09475566150178784,
+            "Sensitivity": 0.4368131868131868,
+            "Recall": 0.4368131868131868,
+            "Specificity": 0.627239263803681,
+            "F1 Score": 0.15572967678746327,
+            "ROC-AUC": 0.5508228274792691,
+            "PR-AUC": 0.09694148459989892,
+            "MCC": 0.03624274363893212,
+            "Cohen's Kappa": 0.024228170000359595,
+            "Log Loss": 0.6904798828427898,
+            "True Negatives": 2556,
+            "False Positives": 1519,
+            "False Negatives": 205,
+            "True Positives": 159
+        },
+        "confusion_matrix": [
+            [
+                2556,
+                1519
+            ],
+            [
+                205,
+                159
+            ]
+        ],
+        "spatial_stats": {},
+        "scale_pos_weight": 11.736728837876614
+    },
+    {
+        "experiment": "E6 \u2014 ML + Temporal + Spatial",
+        "features": [
+            "daily_crime_count",
+            "violent_crime_count",
+            "crime_count_7d",
+            "crime_count_30d",
+            "temporal_consistency",
+            "spatial_signal"
+        ],
+        "metrics": {
+            "Accuracy": 0.5498986258166254,
+            "Precision": 0.09714003944773175,
+            "Sensitivity": 0.5412087912087912,
+            "Recall": 0.5412087912087912,
+            "Specificity": 0.5506748466257668,
+            "F1 Score": 0.16471571906354515,
+            "ROC-AUC": 0.5552514663250859,
+            "PR-AUC": 0.09810964573572475,
+            "MCC": 0.05060810774490011,
+            "Cohen's Kappa": 0.029817416971715582,
+            "Log Loss": 0.6834548627479173,
+            "True Negatives": 2244,
+            "False Positives": 1831,
+            "False Negatives": 167,
+            "True Positives": 197
+        },
+        "confusion_matrix": [
+            [
+                2244,
+                1831
+            ],
+            [
+                167,
+                197
+            ]
+        ],
+        "spatial_stats": {
+            "clusters": 273,
+            "noise_rate": 0.06550267530273163,
+            "train_signal_rate": 0.9219375019015574,
+            "test_signal_rate": 0.9243073096700412,
+            "train_signal_std": 0.2682698734244796,
+            "test_signal_std": 0.2645057158271507
+        },
+        "scale_pos_weight": 11.736728837876614
+    },
+    {
+        "experiment": "E7 \u2014 ML + Anomaly + Spatial",
+        "features": [
+            "daily_crime_count",
+            "violent_crime_count",
+            "crime_count_7d",
+            "crime_count_30d",
+            "anomaly_score",
+            "spatial_signal"
+        ],
+        "metrics": {
+            "Accuracy": 0.6893444469475107,
+            "Precision": 0.10196078431372549,
+            "Sensitivity": 0.35714285714285715,
+            "Recall": 0.35714285714285715,
+            "Specificity": 0.7190184049079754,
+            "F1 Score": 0.1586333129957291,
+            "ROC-AUC": 0.5552828153441651,
+            "PR-AUC": 0.09747386460738343,
+            "MCC": 0.04618227261439702,
+            "Cohen's Kappa": 0.03559612000086332,
+            "Log Loss": 0.6888725807311836,
+            "True Negatives": 2930,
+            "False Positives": 1145,
+            "False Negatives": 234,
+            "True Positives": 130
+        },
+        "confusion_matrix": [
+            [
+                2930,
+                1145
+            ],
+            [
+                234,
+                130
+            ]
+        ],
+        "spatial_stats": {
+            "clusters": 273,
+            "noise_rate": 0.06550267530273163,
+            "train_signal_rate": 0.9219375019015574,
+            "test_signal_rate": 0.9243073096700412,
+            "train_signal_std": 0.2682698734244796,
+            "test_signal_std": 0.2645057158271507
+        },
+        "scale_pos_weight": 11.736728837876614
+    },
+    {
+        "experiment": "E8 \u2014 ML + Temporal + Anomaly + Spatial",
+        "features": [
+            "daily_crime_count",
+            "violent_crime_count",
+            "crime_count_7d",
+            "crime_count_30d",
+            "temporal_consistency",
+            "anomaly_score",
+            "spatial_signal"
+        ],
+        "metrics": {
+            "Accuracy": 0.6242396936246902,
+            "Precision": 0.09553349875930521,
+            "Sensitivity": 0.4230769230769231,
+            "Recall": 0.4230769230769231,
+            "Specificity": 0.6422085889570552,
+            "F1 Score": 0.15587044534412955,
+            "ROC-AUC": 0.5493308838400864,
+            "PR-AUC": 0.097934472552212,
+            "MCC": 0.037246536109847954,
+            "Cohen's Kappa": 0.025490633762257242,
+            "Log Loss": 0.6827001467715547,
+            "True Negatives": 2617,
+            "False Positives": 1458,
+            "False Negatives": 210,
+            "True Positives": 154
+        },
+        "confusion_matrix": [
+            [
+                2617,
+                1458
+            ],
+            [
+                210,
+                154
+            ]
+        ],
+        "spatial_stats": {
+            "clusters": 273,
+            "noise_rate": 0.06550267530273163,
+            "train_signal_rate": 0.9219375019015574,
+            "test_signal_rate": 0.9243073096700412,
+            "train_signal_std": 0.2682698734244796,
+            "test_signal_std": 0.2645057158271507
+        },
+        "scale_pos_weight": 11.736728837876614
+    }
+]

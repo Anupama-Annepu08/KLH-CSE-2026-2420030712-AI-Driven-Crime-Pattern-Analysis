@@ -1,0 +1,9 @@
+Model,True_Negative,False_Positive,False_Negative,True_Positive
+Logistic Regression,2259,1816,164,200
+Decision Tree,2914,1161,238,126
+Random Forest,2931,1144,241,123
+Extra Trees,2914,1161,238,126
+HistGradientBoosting,2397,1678,194,170
+XGBoost,2867,1208,229,135
+MLP Neural Network,2673,1402,210,154
+GARUDA Hybrid,3955,120,347,17

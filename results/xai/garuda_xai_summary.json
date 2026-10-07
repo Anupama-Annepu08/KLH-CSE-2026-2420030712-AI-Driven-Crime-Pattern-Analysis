@@ -1,0 +1,22 @@
+[
+    {
+        "model":"GARUDA E4 XGBoost",
+        "shap_version":"0.49.1",
+        "xgboost_version":"3.2.0",
+        "shap_mode":"fallback",
+        "test_samples":4439,
+        "features":[
+            "daily_crime_count",
+            "violent_crime_count",
+            "crime_count_7d",
+            "crime_count_30d",
+            "temporal_consistency",
+            "anomaly_score",
+            "spatial_signal"
+        ],
+        "predicted_high_risk":1682,
+        "mean_probability":0.4883361459,
+        "max_probability":0.9209163785,
+        "min_probability":0.0099664759
+    }
+]

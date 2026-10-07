@@ -1,0 +1,21 @@
+feature_column,feature_name_clean,category,missing_percent,valid_n,spearman_rho,p_value,adjusted_p_value,fdr_significant,context_role
+feature_50,PctKids2Par,Family / Community,0.0,1994,-0.7631267852821474,0.0,0.0,True,Historical community-level association with ViolentCrimesPerPop
+feature_56,PctIlleg,Family / Community,0.0,1994,0.742786093314694,0.0,0.0,True,Historical community-level association with ViolentCrimesPerPop
+feature_49,PctFam2Par,Family / Community,0.0,1994,-0.7229478058411034,3.26e-322,1.1087e-320,True,Historical community-level association with ViolentCrimesPerPop
+feature_55,NumIlleg,Family / Community,0.0,1994,0.7096179953258779,3.064123968802112e-305,7.813516120445385e-304,True,Historical community-level association with ViolentCrimesPerPop
+feature_9,racePctWhite,Demographics,0.0,1994,-0.6973280563088199,2.011767866134938e-290,4.1040064469152745e-289,True,Historical community-level association with ViolentCrimesPerPop
+feature_51,PctYoungKids2Par,Family / Community,0.0,1994,-0.6856625797340669,4.852314970883319e-277,8.248935450501642e-276,True,Historical community-level association with ViolentCrimesPerPop
+feature_33,NumUnderPov,Economic,0.0,1994,0.6635490356239158,2.486830872711057e-253,3.623667843093255e-252,True,Historical community-level association with ViolentCrimesPerPop
+feature_52,PctTeen2Par,Family / Community,0.0,1994,-0.6628205607199041,1.3874314471388297e-252,1.7689750951020078e-251,True,Historical community-level association with ViolentCrimesPerPop
+feature_21,pctWInvInc,Economic,0.0,1994,-0.6581127167095847,8.254016676723455e-248,9.354552233619916e-247,True,Historical community-level association with ViolentCrimesPerPop
+feature_74,PctPersDenseHous,Housing,0.0,1994,0.647969567792807,8.235020011219338e-238,8.399720411443722e-237,True,Historical community-level association with ViolentCrimesPerPop
+feature_46,FemalePctDiv,Family / Community,0.0,1994,0.6437768475188045,8.668425447104701e-234,8.037994505497085e-233,True,Historical community-level association with ViolentCrimesPerPop
+feature_47,TotalPctDiv,Family / Community,0.0,1994,0.6330495377668054,8.848080762359703e-224,7.520868648005746e-223,True,Historical community-level association with ViolentCrimesPerPop
+feature_23,pctWPubAsst,Economic,0.0,1994,0.6262238991394089,1.293824317772295e-217,1.015154464713647e-216,True,Historical community-level association with ViolentCrimesPerPop
+feature_34,PctPopUnderPov,Economic,0.0,1994,0.619226147205437,1.882652288476121e-211,1.3716466673183169e-210,True,Historical community-level association with ViolentCrimesPerPop
+feature_8,racepctblack,Demographics,0.0,1994,0.6042767186389729,8.527589856898941e-199,5.798761102691281e-198,True,Historical community-level association with ViolentCrimesPerPop
+feature_73,PctPersOwnOccup,Housing,0.0,1994,-0.596610271306787,1.4595419532805872e-192,9.304579952163743e-192,True,Historical community-level association with ViolentCrimesPerPop
+feature_44,MalePctDivorce,Family / Community,0.0,1994,0.5945564778767101,6.392068812353429e-191,3.835241287412057e-190,True,Historical community-level association with ViolentCrimesPerPop
+feature_83,PctHousNoPhone,Housing,0.0,1994,0.5852481293187664,1.2547125816047312e-183,7.11003796242681e-183,True,Historical community-level association with ViolentCrimesPerPop
+feature_38,PctUnemployed,Employment,0.0,1994,0.5478958702798706,1.2981694565397599e-156,6.969120240371345e-156,True,Historical community-level association with ViolentCrimesPerPop
+feature_75,PctHousLess3BR,Housing,0.0,1994,0.5398712738893342,3.0320227946744153e-151,1.5463316252839518e-150,True,Historical community-level association with ViolentCrimesPerPop

@@ -1,0 +1,16 @@
+{
+    "train_rows": 17755,
+    "test_rows": 4439,
+    "train_start": "2025-01-02 00:00:00",
+    "train_end": "2025-03-07 00:00:00",
+    "test_start": "2025-03-07 00:00:00",
+    "test_end": "2025-03-23 00:00:00",
+    "train_target_distribution": {
+        "0": 16361,
+        "1": 1394
+    },
+    "test_target_distribution": {
+        "0": 4075,
+        "1": 364
+    }
+}

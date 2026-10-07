@@ -1,0 +1,8 @@
+feature,importance
+anomaly_score,0.20539176
+crime_count_30d,0.19859761
+violent_crime_count,0.16587712
+temporal_consistency,0.16253571
+crime_count_7d,0.13689364
+daily_crime_count,0.13070413
+spatial_signal,0.0

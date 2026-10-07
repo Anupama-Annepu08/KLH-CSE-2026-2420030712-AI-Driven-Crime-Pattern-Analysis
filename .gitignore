@@ -1,0 +1,84 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# =========================
+# Secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# IDE / OS
+# =========================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# =========================
+# Python tooling
+# =========================
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# =========================
+# Node / React
+# =========================
+node_modules/
+frontend/node_modules/
+dist/
+build/
+
+# =========================
+# Model artifacts
+# =========================
+*.pkl
+*.joblib
+*.h5
+*.keras
+
+# =========================
+# Raw datasets
+# =========================
+data/*.csv
+data/*.data
+
+# =========================
+# Temporary / backup files
+# =========================
+*_backup*
+*.bak
+*.tmp
+*.log
+
+# =========================
+# Downloaded research-paper
+# webpage assets
+# =========================
+Research Papers/*_files/
+
+# =========================
+# Large generated files
+# =========================
+results/*.pkl
+results/*.joblib
+# Research papers and internal review material
+Research Papers/
+Review_2/
+
+# Duplicate final-result copies
+results/*_FINAL.csv
