@@ -1,0 +1,865 @@
+﻿
+  src\run_consensus.py:9:from src.model_training import train_classification_model
+> src\run_consensus.py:10:from src.consensus_engine import calculate_consensus_risk
+  src\run_consensus.py:11:
+  src\run_consensus.py:12:
+> src\run_consensus.py:13:def main():
+  src\run_consensus.py:14:
+  src\run_consensus.py:15:    # --------------------------------------------------------
+  src\run_consensus.py:49:        model_name="XGBoost",
+> src\run_consensus.py:50:        target="high_risk",
+  src\run_consensus.py:51:    )
+  src\run_consensus.py:52:
+  src\run_consensus.py:60:    print("\n" + "=" * 70)
+> src\run_consensus.py:61:    print("GARUDA CONSENSUS RISK ENGINE")
+  src\run_consensus.py:62:    print("=" * 70)
+  src\run_consensus.py:63:
+  src\run_consensus.py:64:    # --------------------------------------------------------
+> src\run_consensus.py:65:    # Calculate consensus for every test row
+  src\run_consensus.py:66:    # --------------------------------------------------------
+  src\run_consensus.py:67:
+> src\run_consensus.py:68:    consensus_results = []
+  src\run_consensus.py:69:
+  src\run_consensus.py:70:    for index, probability in zip(
+  src\run_consensus.py:76:
+> src\run_consensus.py:77:        consensus = calculate_consensus_risk(
+  src\run_consensus.py:78:            ml_probability=probability,
+  src\run_consensus.py:79:            temporal_consistency=row[
+  src\run_consensus.py:89:
+> src\run_consensus.py:90:        consensus_results.append(
+> src\run_consensus.py:91:            consensus
+  src\run_consensus.py:92:        )
+  src\run_consensus.py:93:
+  src\run_consensus.py:97:
+> src\run_consensus.py:98:    print("\nFirst 10 consensus decisions:")
+  src\run_consensus.py:99:    print("-" * 70)
+  src\run_consensus.py:100:
+  src\run_consensus.py:101:    for i, result in enumerate(
+> src\run_consensus.py:102:        consensus_results[:10],
+  src\run_consensus.py:103:        start=1
+  src\run_consensus.py:104:    ):
+  src\run_consensus.py:111:            f"S={result['spatial_signal']:.0f} | "
+> src\run_consensus.py:112:            f"CRS={result['consensus_score']:.3f} | "
+  src\run_consensus.py:113:            f"Risk={result['risk_level']}"
+  src\run_consensus.py:114:        )
+  src\run_consensus.py:121:        result["risk_level"]
+> src\run_consensus.py:122:        for result in consensus_results
+  src\run_consensus.py:123:    ]
+  src\run_consensus.py:124:
+  src\run_consensus.py:125:    print("\n" + "-" * 70)
+> src\run_consensus.py:126:    print("CONSENSUS SUMMARY")
+  src\run_consensus.py:127:    print("-" * 70)
+  src\run_consensus.py:128:
+  src\run_consensus.py:130:        "Total test cases:",
+> src\run_consensus.py:131:        len(consensus_results)
+  src\run_consensus.py:132:    )
+  src\run_consensus.py:133:
+  src\run_consensus.py:144:    print(
+> src\run_consensus.py:145:        "HIGH:",
+> src\run_consensus.py:146:        risk_levels.count("HIGH")
+  src\run_consensus.py:147:    )
+  src\run_consensus.py:148:
+  src\consensus_engine.py:4:# ============================================================
+> src\consensus_engine.py:5:# GARUDA CONSENSUS RISK ENGINE
+  src\consensus_engine.py:6:# ============================================================
+  src\consensus_engine.py:7:
+  src\consensus_engine.py:13:
+> src\consensus_engine.py:14:def calculate_consensus_risk(
+  src\consensus_engine.py:15:    ml_probability,
+  src\consensus_engine.py:16:    temporal_consistency,
+  src\consensus_engine.py:20:    """
+> src\consensus_engine.py:21:    Calculate GARUDA Consensus Risk Score.
+  src\consensus_engine.py:22:
+  src\consensus_engine.py:23:    CRS =
+  src\consensus_engine.py:36:
+> src\consensus_engine.py:37:    consensus_score = (
+  src\consensus_engine.py:38:        ML_WEIGHT * ml_probability
+  src\consensus_engine.py:39:        + TEMPORAL_WEIGHT * temporal_consistency
+  src\consensus_engine.py:43:
+> src\consensus_engine.py:44:    consensus_score = max(
+  src\consensus_engine.py:45:        0.0,
+> src\consensus_engine.py:46:        min(1.0, consensus_score)
+  src\consensus_engine.py:47:    )
+  src\consensus_engine.py:48:
+> src\consensus_engine.py:49:    if consensus_score < 0.33:
+  src\consensus_engine.py:50:        risk_level = "LOW"
+  src\consensus_engine.py:51:
+> src\consensus_engine.py:52:    elif consensus_score < 0.66:
+  src\consensus_engine.py:53:        risk_level = "MEDIUM"
+  src\consensus_engine.py:54:
+  src\consensus_engine.py:55:    else:
+> src\consensus_engine.py:56:        risk_level = "HIGH"
+  src\consensus_engine.py:57:
+  src\consensus_engine.py:58:    return {
+> src\consensus_engine.py:59:        "consensus_score": consensus_score,
+  src\consensus_engine.py:60:        "risk_level": risk_level,
+  src\consensus_engine.py:61:        "ml_probability": ml_probability,
+  src\consensus_engine.py:67:
+> src\consensus_engine.py:68:def calculate_consensus_dataframe(df):
+  src\consensus_engine.py:69:    """
+> src\consensus_engine.py:70:    Calculate consensus risk for every row in a DataFrame.
+  src\consensus_engine.py:71:
+  src\consensus_engine.py:72:    Required columns:
+  src\consensus_engine.py:93:        raise ValueError(
+> src\consensus_engine.py:94:            f"Missing consensus columns: {missing_columns}"
+  src\consensus_engine.py:95:        )
+  src\consensus_engine.py:96:
+  src\consensus_engine.py:98:
+> src\consensus_engine.py:99:    result["consensus_score"] = (
+  src\consensus_engine.py:100:        ML_WEIGHT * result["ml_probability"]
+  src\consensus_engine.py:101:        + TEMPORAL_WEIGHT * result["temporal_consistency"]
+  src\consensus_engine.py:105:
+> src\consensus_engine.py:106:    result["consensus_score"] = (
+> src\consensus_engine.py:107:        result["consensus_score"]
+  src\consensus_engine.py:108:        .clip(0, 1)
+  src\consensus_engine.py:109:    )
+  src\consensus_engine.py:111:    result["risk_level"] = pd.cut(
+> src\consensus_engine.py:112:        result["consensus_score"],
+  src\consensus_engine.py:113:        bins=[-0.001, 0.33, 0.66, 1.0],
+  src\consensus_engine.py:114:        labels=[
+  src\consensus_engine.py:116:            "MEDIUM",
+> src\consensus_engine.py:117:            "HIGH"
+  src\consensus_engine.py:118:        ]
+  src\consensus_engine.py:119:    )
+  src\consensus_engine.py:123:
+> src\consensus_engine.py:124:def get_consensus_explanation(result):
+  src\consensus_engine.py:125:    """
+  src\consensus_engine.py:126:    Generate a simple human-readable explanation
+> src\consensus_engine.py:127:    of the consensus decision.
+  src\consensus_engine.py:128:    """
+  src\consensus_engine.py:129:
+  src\consensus_engine.py:148:        explanations.append(
+> src\consensus_engine.py:149:            "the location has spatial support from DBSCAN"
+  src\consensus_engine.py:150:        )
+  src\consensus_engine.py:151:
+  src\consensus_engine.py:159:
+> src\consensus_engine.py:160:def print_consensus_result(result):
+  src\consensus_engine.py:161:    """
+> src\consensus_engine.py:162:    Print a GARUDA consensus decision.
+  src\consensus_engine.py:163:    """
+  src\consensus_engine.py:164:
+  src\consensus_engine.py:165:    print("\n" + "=" * 60)
+> src\consensus_engine.py:166:    print("GARUDA CONSENSUS RISK ASSESSMENT")
+  src\consensus_engine.py:167:    print("=" * 60)
+  src\consensus_engine.py:168:
+  src\consensus_engine.py:191:    print(
+> src\consensus_engine.py:192:        f"Consensus Risk Score: "
+> src\consensus_engine.py:193:        f"{result['consensus_score']:.4f}"
+  src\consensus_engine.py:194:    )
+  src\consensus_engine.py:195:
+  src\consensus_engine.py:204:        "Explanation:",
+> src\consensus_engine.py:205:        get_consensus_explanation(result)
+  src\consensus_engine.py:206:    )
+  src\consensus_engine.py:207:
+  src\feature_engineering.py:2:import numpy as np
+> src\feature_engineering.py:3:from sklearn.cluster import DBSCAN
+  src\feature_engineering.py:4:
+  src\feature_engineering.py:5:
+  src\feature_engineering.py:9:
+> src\feature_engineering.py:10:def detect_date_columns(df):
+  src\feature_engineering.py:11:
+  src\feature_engineering.py:12:    date_columns = []
+  src\feature_engineering.py:40:
+> src\feature_engineering.py:41:def create_temporal_features(df, date_column=None):
+  src\feature_engineering.py:42:
+  src\feature_engineering.py:43:    result = df.copy()
+  src\feature_engineering.py:85:
+> src\feature_engineering.py:86:def create_crime_features(df):
+  src\feature_engineering.py:87:
+  src\feature_engineering.py:88:    result = df.copy()
+  src\feature_engineering.py:190:
+> src\feature_engineering.py:191:            avg_latitude=(
+  src\feature_engineering.py:192:                "latitude",
+  src\feature_engineering.py:193:                "mean"
+  src\feature_engineering.py:195:
+> src\feature_engineering.py:196:            avg_longitude=(
+  src\feature_engineering.py:197:                "longitude",
+  src\feature_engineering.py:198:                "mean"
+  src\feature_engineering.py:345:
+> src\feature_engineering.py:346:def _temporal_consistency_for_group(group):
+  src\feature_engineering.py:347:
+  src\feature_engineering.py:348:    group = group.sort_values(
+  src\feature_engineering.py:402:
+> src\feature_engineering.py:403:def add_temporal_consistency(df):
+  src\feature_engineering.py:404:
+  src\feature_engineering.py:405:    groups = []
+  src\feature_engineering.py:435:
+> src\feature_engineering.py:436:def create_historical_features(df):
+  src\feature_engineering.py:437:
+  src\feature_engineering.py:438:    result = df.copy()
+  src\feature_engineering.py:449:    # --------------------------------------------------------
+> src\feature_engineering.py:450:    # Historical threshold available at current day
+  src\feature_engineering.py:451:    # --------------------------------------------------------
+  src\feature_engineering.py:452:
+> src\feature_engineering.py:453:    result["risk_threshold"] = (
+  src\feature_engineering.py:454:
+  src\feature_engineering.py:455:        result
+  src\feature_engineering.py:483:    # --------------------------------------------------------
+> src\feature_engineering.py:484:    # NEXT-DAY HIGH-RISK TARGET
+  src\feature_engineering.py:485:    #
+> src\feature_engineering.py:486:    # Tomorrow is high-risk if tomorrow's crime count
+> src\feature_engineering.py:487:    # exceeds the historical threshold available TODAY.
+  src\feature_engineering.py:488:    #
+  src\feature_engineering.py:489:    # This makes the prediction task:
+  src\feature_engineering.py:496:
+> src\feature_engineering.py:497:    result["high_risk"] = np.where(
+  src\feature_engineering.py:498:
+  src\feature_engineering.py:499:        result["next_day_crime_count"].isna()
+  src\feature_engineering.py:500:        |
+> src\feature_engineering.py:501:        result["risk_threshold"].isna(),
+  src\feature_engineering.py:502:
+  src\feature_engineering.py:503:        np.nan,
+  src\feature_engineering.py:507:            >
+> src\feature_engineering.py:508:            result["risk_threshold"]
+  src\feature_engineering.py:509:        ).astype(int)
+  src\feature_engineering.py:510:
+  src\feature_engineering.py:527:
+> src\feature_engineering.py:528:def add_spatial_signal(
+  src\feature_engineering.py:529:    train_df,
+  src\feature_engineering.py:530:    test_df,
+  src\feature_engineering.py:538:    coordinate_columns = [
+> src\feature_engineering.py:539:        "avg_latitude",
+> src\feature_engineering.py:540:        "avg_longitude"
+  src\feature_engineering.py:541:    ]
+  src\feature_engineering.py:542:
+  src\feature_engineering.py:599:
+> src\feature_engineering.py:600:    dbscan = DBSCAN(
+  src\feature_engineering.py:601:        eps=eps,
+  src\feature_engineering.py:602:        min_samples=min_samples
+  src\feature_engineering.py:604:
+> src\feature_engineering.py:605:    dbscan.fit(
+  src\feature_engineering.py:606:        valid_train
+  src\feature_engineering.py:607:    )
+  src\feature_engineering.py:612:
+> src\feature_engineering.py:613:    train_labels = dbscan.labels_
+  src\feature_engineering.py:614:
+  src\feature_engineering.py:615:    train_indices = (
+  src\feature_engineering.py:632:    core_samples = (
+> src\feature_engineering.py:633:        dbscan.components_
+  src\feature_engineering.py:634:    )
+  src\feature_engineering.py:635:
+  src\feature_engineering.py:678:
+> src\feature_engineering.py:679:    labels = dbscan.labels_
+  src\feature_engineering.py:680:
+  src\feature_engineering.py:681:    non_noise = labels[
+  src\feature_engineering.py:747:
+> src\feature_engineering.py:748:    def get_spatial_statistics(train_data, test_data, spatial_model):
+  src\feature_engineering.py:749:
+  src\feature_engineering.py:750:
+  src\feature_engineering.py:800:    }
+> src\feature_engineering.py:801:def get_spatial_statistics(train_data, test_data, spatial_model):
+  src\feature_engineering.py:802:    train_signal = train_data.get(
+  src\feature_engineering.py:803:        "spatial_signal",
+  src\model_training.py:28:    HistGradientBoostingClassifier,
+> src\model_training.py:29:    IsolationForest,
+  src\model_training.py:30:)
+  src\model_training.py:31:
+  src\model_training.py:47:    "next_day_crime_count",
+> src\model_training.py:48:    "risk_threshold",
+> src\model_training.py:49:    "high_risk",
+  src\model_training.py:50:    "beat",
+  src\model_training.py:51:    "crime_date",
+  src\model_training.py:67:SPATIAL_FEATURES = [
+> src\model_training.py:68:    "avg_latitude",
+> src\model_training.py:69:    "avg_longitude",
+  src\model_training.py:70:]
+  src\model_training.py:71:
+  src\model_training.py:79:
+> src\model_training.py:80:def prepare_data(df, features, target, task="classification"):
+  src\model_training.py:81:
+  src\model_training.py:82:    data = df.copy()
+  src\model_training.py:138:
+> src\model_training.py:139:def sort_by_time(df):
+  src\model_training.py:140:
+  src\model_training.py:141:    data = df.copy()
+  src\model_training.py:167:
+> src\model_training.py:168:def time_split(data, train_ratio=0.8):
+  src\model_training.py:169:
+  src\model_training.py:170:    split_index = int(
+  src\model_training.py:188:
+> src\model_training.py:189:def add_anomaly_signal(
+  src\model_training.py:190:    train_data,
+  src\model_training.py:191:    test_data
+  src\model_training.py:236:
+> src\model_training.py:237:    isolation_forest = IsolationForest(
+  src\model_training.py:238:        n_estimators=200,
+  src\model_training.py:239:        contamination="auto",
+  src\model_training.py:256:
+> src\model_training.py:257:    # Higher value = more anomalous
+  src\model_training.py:258:
+  src\model_training.py:259:    train_data["anomaly_score"] = (
+  src\model_training.py:267:    train_predictions = (
+> src\model_training.py:268:        isolation_forest.predict(X_train)
+  src\model_training.py:269:    )
+  src\model_training.py:270:
+  src\model_training.py:271:    test_predictions = (
+> src\model_training.py:272:        isolation_forest.predict(X_test)
+  src\model_training.py:273:    )
+  src\model_training.py:274:
+  src\model_training.py:334:
+> src\model_training.py:335:def get_classification_models():
+  src\model_training.py:336:
+  src\model_training.py:337:    models = {
+  src\model_training.py:421:
+> src\model_training.py:422:def get_regression_models():
+  src\model_training.py:423:
+  src\model_training.py:424:    models = {
+  src\model_training.py:456:
+> src\model_training.py:457:def train_classification_model(
+  src\model_training.py:458:    df,
+  src\model_training.py:459:    features,
+> src\model_training.py:460:    target="high_risk",
+  src\model_training.py:461:    model_name="Random Forest",
+  src\model_training.py:462:    train_ratio=0.8,
+  src\model_training.py:485:    # Spatial coordinates are required internally to create
+> src\model_training.py:486:    # the DBSCAN signal, but they are NOT automatically used
+  src\model_training.py:487:    # as final ML features.
+  src\model_training.py:488:    # --------------------------------------------------------
+  src\model_training.py:555:        print("\n" + "=" * 60)
+> src\model_training.py:556:        print("DBSCAN SPATIAL SIGNAL")
+  src\model_training.py:557:        print("=" * 60)
+  src\model_training.py:558:
+  src\model_training.py:559:        print(
+> src\model_training.py:560:            "DBSCAN eps:",
+  src\model_training.py:561:            SPATIAL_EPS
+  src\model_training.py:562:        )
+  src\model_training.py:564:        print(
+> src\model_training.py:565:            "DBSCAN min_samples:",
+  src\model_training.py:566:            SPATIAL_MIN_SAMPLES
+  src\model_training.py:567:        )
+  src\model_training.py:678:
+> src\model_training.py:679:    y_pred = model.predict(
+  src\model_training.py:680:        X_test
+  src\model_training.py:681:    )
+  src\model_training.py:684:        model,
+> src\model_training.py:685:        "predict_proba"
+  src\model_training.py:686:    ):
+  src\model_training.py:687:
+  src\model_training.py:688:        y_probability = (
+> src\model_training.py:689:            model.predict_proba(
+  src\model_training.py:690:                X_test
+  src\model_training.py:691:            )[:, 1]
+  src\model_training.py:739:
+> src\model_training.py:740:        fpr, tpr, thresholds = (
+  src\model_training.py:741:            roc_curve(
+  src\model_training.py:742:                y_test,
+  src\model_training.py:753:        tpr = None
+> src\model_training.py:754:        thresholds = None
+  src\model_training.py:755:
+  src\model_training.py:756:    cm = confusion_matrix(
+  src\model_training.py:793:
+> src\model_training.py:794:        "thresholds": thresholds,
+  src\model_training.py:795:
+  src\model_training.py:796:        "anomaly_model": anomaly_model,
+  src\model_training.py:811:
+> src\model_training.py:812:def train_regression_model(
+  src\model_training.py:813:    df,
+  src\model_training.py:814:    features,
+  src\model_training.py:866:
+> src\model_training.py:867:    y_pred = model.predict(
+  src\model_training.py:868:        X_test
+  src\model_training.py:869:    )
+  src\model_training.py:923:
+> src\model_training.py:924:def train_model(
+  src\model_training.py:925:    df,
+  src\model_training.py:926:    features,
+  src\model_training.py:967:
+> src\model_training.py:968:def train_all_models(
+  src\model_training.py:969:    df,
+  src\model_training.py:970:    features,
+> src\model_training.py:971:    target="high_risk",
+  src\model_training.py:972:    train_ratio=0.8,
+  src\model_training.py:973:):
+  src\model_training.py:1018:
+> src\model_training.py:1019:def compare_models(
+  src\model_training.py:1020:    results,
+  src\model_training.py:1021:    metric="F1 Score"
+  src\model_training.py:1061:
+> src\model_training.py:1062:def run_e3_experiment(df):
+  src\model_training.py:1063:
+  src\model_training.py:1064:    features = [
+  src\model_training.py:1099:        features=features,
+> src\model_training.py:1100:        target="high_risk",
+  src\model_training.py:1101:        train_ratio=0.8,
+  src\model_training.py:1102:    )
+  src\model_training.py:1142:
+> src\model_training.py:1143:def run_e4_experiment(df):
+  src\model_training.py:1144:
+  src\model_training.py:1145:    features = [
+  src\model_training.py:1180:    print(
+> src\model_training.py:1181:        "\nSpatial method: DBSCAN"
+  src\model_training.py:1182:    )
+  src\model_training.py:1183:
+  src\model_training.py:1196:        features=features,
+> src\model_training.py:1197:        target="high_risk",
+  src\model_training.py:1198:        train_ratio=0.8,
+  src\model_training.py:1199:    )
+  src\model_evaluation.py:4:
+> src\model_evaluation.py:5:def create_confusion_matrix_df(matrix):
+  src\model_evaluation.py:6:    return pd.DataFrame(
+  src\model_evaluation.py:7:        matrix,
+> src\model_evaluation.py:8:        index=["Actual Low Risk", "Actual High Risk"],
+> src\model_evaluation.py:9:        columns=["Predicted Low Risk", "Predicted High Risk"]
+  src\model_evaluation.py:10:    )
+  src\model_evaluation.py:11:
+  src\model_evaluation.py:12:
+> src\model_evaluation.py:13:def create_roc_curve_df(fpr, tpr):
+  src\model_evaluation.py:14:    return pd.DataFrame(
+  src\model_evaluation.py:15:        {
+  src\model_evaluation.py:21:
+> src\model_evaluation.py:22:def create_model_comparison(results):
+  src\model_evaluation.py:23:    rows = []
+  src\model_evaluation.py:24:
+  src\model_evaluation.py:47:
+> src\model_evaluation.py:48:def get_best_model(results):
+  src\model_evaluation.py:49:    comparison = create_model_comparison(results)
+  src\model_evaluation.py:50:
+  src\model_evaluation.py:56:
+> src\model_evaluation.py:57:def plot_confusion_matrix(matrix):
+  src\model_evaluation.py:58:    matrix_df = create_confusion_matrix_df(
+  src\model_evaluation.py:59:        matrix
+  src\model_evaluation.py:71:
+> src\model_evaluation.py:72:def plot_roc_curve(fpr, tpr, model_name):
+  src\model_evaluation.py:73:
+  src\model_evaluation.py:74:    roc_df = create_roc_curve_df(
+  src\run_xai.py:33:
+> src\run_xai.py:34:def section(title):
+  src\run_xai.py:35:
+  src\run_xai.py:36:    print("\n" + "=" * 80)
+  src\run_xai.py:50:
+> src\run_xai.py:51:    artifact = pickle.load(f)
+  src\run_xai.py:52:
+  src\run_xai.py:53:
+  src\run_xai.py:195:
+> src\run_xai.py:196:y_train = train_data["high_risk"].copy()
+  src\run_xai.py:197:
+> src\run_xai.py:198:y_test = test_data["high_risk"].copy()
+  src\run_xai.py:199:
+  src\run_xai.py:200:
+  src\run_xai.py:273:
+> src\run_xai.py:274:y_probability = model.predict_proba(
+  src\run_xai.py:275:    X_test
+  src\run_xai.py:276:)[:, 1]
+  src\run_xai.py:292:print(
+> src\run_xai.py:293:    "\nPredicted high-risk rows:",
+  src\run_xai.py:294:    int(y_pred.sum())
+  src\run_xai.py:295:)
+  src\run_xai.py:803:section(
+> src\run_xai.py:804:    "LOCAL HIGH-RISK EXPLANATIONS"
+  src\run_xai.py:805:)
+  src\run_xai.py:806:
+  src\run_xai.py:820:
+> src\run_xai.py:821:high_risk_indices = np.argsort(
+  src\run_xai.py:822:    y_probability
+  src\run_xai.py:823:)[::-1][:20]
+  src\run_xai.py:829:for rank, idx in enumerate(
+> src\run_xai.py:830:    high_risk_indices,
+  src\run_xai.py:831:    start=1
+  src\run_xai.py:832:):
+  src\run_xai.py:875:        OUTPUT_DIR,
+> src\run_xai.py:876:        "garuda_top_20_high_risk_cases.csv"
+  src\run_xai.py:877:    ),
+  src\run_xai.py:878:    index=False
+  src\run_xai.py:882:print(
+> src\run_xai.py:883:    "\nTop 20 high-risk cases:"
+  src\run_xai.py:884:)
+  src\run_xai.py:885:
+  src\run_xai.py:927:
+> src\run_xai.py:928:    "predicted_high_risk":
+  src\run_xai.py:929:        int(y_pred.sum()),
+  src\run_xai.py:930:
+  src\xai_engine.py:104:
+> src\xai_engine.py:105:def format_feature_name(feature):
+  src\xai_engine.py:106:
+  src\xai_engine.py:107:    names = {
+  src\xai_engine.py:143:
+> src\xai_engine.py:144:def validate_feature_matrix(
+  src\xai_engine.py:145:    X,
+> src\xai_engine.py:146:    feature_names
+  src\xai_engine.py:147:):
+  src\xai_engine.py:148:
+  src\xai_engine.py:150:        feature
+> src\xai_engine.py:151:        for feature in feature_names
+  src\xai_engine.py:152:        if feature not in X.columns
+  src\xai_engine.py:153:    ]
+  src\xai_engine.py:162:    data = X[
+> src\xai_engine.py:163:        feature_names
+  src\xai_engine.py:164:    ].copy()
+  src\xai_engine.py:165:
+> src\xai_engine.py:166:    for column in feature_names:
+  src\xai_engine.py:167:
+  src\xai_engine.py:168:        data[column] = pd.to_numeric(
+  src\xai_engine.py:201:
+> src\xai_engine.py:202:def get_model_feature_names(model):
+  src\xai_engine.py:203:
+  src\xai_engine.py:204:    if hasattr(
+  src\xai_engine.py:205:        model,
+> src\xai_engine.py:206:        "feature_names_in_"
+  src\xai_engine.py:207:    ):
+  src\xai_engine.py:208:
+  src\xai_engine.py:209:        return list(
+> src\xai_engine.py:210:            model.feature_names_in_
+  src\xai_engine.py:211:        )
+  src\xai_engine.py:212:
+  src\xai_engine.py:219:
+> src\xai_engine.py:220:        names = booster.feature_names
+  src\xai_engine.py:221:
+  src\xai_engine.py:222:        if names is not None:
+  src\xai_engine.py:235:
+> src\xai_engine.py:236:def create_shap_explainer(model):
+  src\xai_engine.py:237:
+  src\xai_engine.py:238:    if not hasattr(
+  src\xai_engine.py:256:
+> src\xai_engine.py:257:def compute_shap_values(
+  src\xai_engine.py:258:    model,
+  src\xai_engine.py:259:    X
+  src\xai_engine.py:261:
+> src\xai_engine.py:262:    feature_names = (
+> src\xai_engine.py:263:        get_model_feature_names(model)
+  src\xai_engine.py:264:    )
+  src\xai_engine.py:265:
+  src\xai_engine.py:267:        X,
+> src\xai_engine.py:268:        feature_names
+  src\xai_engine.py:269:    )
+  src\xai_engine.py:270:
+  src\xai_engine.py:306:        1
+> src\xai_engine.py:307:    ] != len(feature_names):
+  src\xai_engine.py:308:
+  src\xai_engine.py:309:        raise ValueError(
+  src\xai_engine.py:324:
+> src\xai_engine.py:325:def global_shap_importance(
+  src\xai_engine.py:326:    X,
+  src\xai_engine.py:327:    shap_values
+  src\xai_engine.py:381:
+> src\xai_engine.py:382:def explain_instance(
+  src\xai_engine.py:383:    X_row,
+  src\xai_engine.py:384:    shap_row,
+  src\xai_engine.py:463:
+> src\xai_engine.py:464:def get_top_contributors(
+  src\xai_engine.py:465:    explanation,
+  src\xai_engine.py:466:    top_n=5
+  src\xai_engine.py:486:
+> src\xai_engine.py:487:def generate_human_explanation(
+  src\xai_engine.py:488:    explanation,
+  src\xai_engine.py:489:    prediction_probability=None,
+  src\xai_engine.py:506:            f"{prediction_probability:.1%} "
+> src\xai_engine.py:507:            "probability of high risk."
+  src\xai_engine.py:508:        )
+  src\xai_engine.py:509:
+  src\xai_engine.py:556:
+> src\xai_engine.py:557:def run_global_xai(
+  src\xai_engine.py:558:    model,
+  src\xai_engine.py:559:    X_test,
+  src\xai_engine.py:636:
+> src\xai_engine.py:637:def run_local_xai(
+  src\xai_engine.py:638:    model,
+  src\xai_engine.py:639:    X_test,
+  src\xai_engine.py:696:    probability = float(
+> src\xai_engine.py:697:        model.predict_proba(
+  src\xai_engine.py:698:            X_validated.iloc[
+  src\xai_engine.py:699:                [row_index]
+  src\xai_engine.py:726:    print(
+> src\xai_engine.py:727:        f"Predicted high-risk probability: "
+  src\xai_engine.py:728:        f"{probability:.4f}"
+  src\xai_engine.py:729:    )
+  dashboard\model_comparison_8_models.py:19:    HistGradientBoostingClassifier,
+> dashboard\model_comparison_8_models.py:20:    IsolationForest
+  dashboard\model_comparison_8_models.py:21:)
+  dashboard\model_comparison_8_models.py:22:from sklearn.neural_network import MLPClassifier
+> dashboard\model_comparison_8_models.py:23:from sklearn.cluster import DBSCAN
+  dashboard\model_comparison_8_models.py:24:from sklearn.neighbors import NearestNeighbors
+  dashboard\model_comparison_8_models.py:25:
+  dashboard\model_comparison_8_models.py:105:SPATIAL_FEATURES = [
+> dashboard\model_comparison_8_models.py:106:    "avg_latitude",
+> dashboard\model_comparison_8_models.py:107:    "avg_longitude"
+  dashboard\model_comparison_8_models.py:108:]
+  dashboard\model_comparison_8_models.py:109:
+  dashboard\model_comparison_8_models.py:121:
+> dashboard\model_comparison_8_models.py:122:def create_xgboost_model(scale_pos_weight=1.0):
+  dashboard\model_comparison_8_models.py:123:
+  dashboard\model_comparison_8_models.py:124:    return XGBClassifier(
+  dashboard\model_comparison_8_models.py:141:
+> dashboard\model_comparison_8_models.py:142:def load_and_engineer_data():
+  dashboard\model_comparison_8_models.py:143:
+  dashboard\model_comparison_8_models.py:144:    print("\n")
+  dashboard\model_comparison_8_models.py:214:                columns={
+> dashboard\model_comparison_8_models.py:215:                    "latitude": "avg_latitude",
+> dashboard\model_comparison_8_models.py:216:                    "longitude": "avg_longitude"
+  dashboard\model_comparison_8_models.py:217:                }
+  dashboard\model_comparison_8_models.py:218:            )
+  dashboard\model_comparison_8_models.py:272:    # Missing values are handled later using training-only references.
+> dashboard\model_comparison_8_models.py:273:    for column in ["avg_latitude", "avg_longitude"]:
+  dashboard\model_comparison_8_models.py:274:        if column not in df.columns:
+  dashboard\model_comparison_8_models.py:275:            df[column] = np.nan
+  dashboard\model_comparison_8_models.py:279:    coordinate_count = int(
+> dashboard\model_comparison_8_models.py:280:        df[["avg_latitude", "avg_longitude"]]
+  dashboard\model_comparison_8_models.py:281:        .notna()
+  dashboard\model_comparison_8_models.py:282:        .all(axis=1)
+  dashboard\model_comparison_8_models.py:307:
+> dashboard\model_comparison_8_models.py:308:def prepare_common_cohort(df):
+  dashboard\model_comparison_8_models.py:309:
+  dashboard\model_comparison_8_models.py:310:    required_columns = [
+  dashboard\model_comparison_8_models.py:322:        "next_day_crime_count",
+> dashboard\model_comparison_8_models.py:323:        "high_risk"
+  dashboard\model_comparison_8_models.py:324:    ]
+  dashboard\model_comparison_8_models.py:325:
+  dashboard\model_comparison_8_models.py:354:        "next_day_crime_count",
+> dashboard\model_comparison_8_models.py:355:        "high_risk"
+  dashboard\model_comparison_8_models.py:356:    ] + [
+  dashboard\model_comparison_8_models.py:357:        column
+  dashboard\model_comparison_8_models.py:396:            "next_day_crime_count",
+> dashboard\model_comparison_8_models.py:397:            "high_risk"
+  dashboard\model_comparison_8_models.py:398:        ]
+  dashboard\model_comparison_8_models.py:399:    ).copy()
+  dashboard\model_comparison_8_models.py:400:
+> dashboard\model_comparison_8_models.py:401:    data["high_risk"] = (
+> dashboard\model_comparison_8_models.py:402:        data["high_risk"]
+  dashboard\model_comparison_8_models.py:403:        .astype(int)
+  dashboard\model_comparison_8_models.py:404:    )
+  dashboard\model_comparison_8_models.py:439:    print(
+> dashboard\model_comparison_8_models.py:440:        data["high_risk"]
+  dashboard\model_comparison_8_models.py:441:        .value_counts()
+  dashboard\model_comparison_8_models.py:442:        .sort_index()
+  dashboard\model_comparison_8_models.py:480:    print(
+> dashboard\model_comparison_8_models.py:481:        train_data["high_risk"]
+  dashboard\model_comparison_8_models.py:482:        .value_counts()
+  dashboard\model_comparison_8_models.py:483:        .sort_index()
+  dashboard\model_comparison_8_models.py:488:    print(
+> dashboard\model_comparison_8_models.py:489:        test_data["high_risk"]
+  dashboard\model_comparison_8_models.py:490:        .value_counts()
+  dashboard\model_comparison_8_models.py:491:        .sort_index()
+  dashboard\model_comparison_8_models.py:494:
+> dashboard\model_comparison_8_models.py:495:    if train_data["high_risk"].nunique() < 2:
+  dashboard\model_comparison_8_models.py:496:        raise ValueError(
+  dashboard\model_comparison_8_models.py:497:            "Training data contains only one class."
+  dashboard\model_comparison_8_models.py:499:
+> dashboard\model_comparison_8_models.py:500:    if test_data["high_risk"].nunique() < 2:
+  dashboard\model_comparison_8_models.py:501:        raise ValueError(
+  dashboard\model_comparison_8_models.py:502:            "Testing data contains only one class."
+  dashboard\model_comparison_8_models.py:515:
+> dashboard\model_comparison_8_models.py:516:def prepare_spatial_coordinates(
+  dashboard\model_comparison_8_models.py:517:    train_data,
+  dashboard\model_comparison_8_models.py:518:    test_data
+  dashboard\model_comparison_8_models.py:614:
+> dashboard\model_comparison_8_models.py:615:def add_anomaly_signal(
+  dashboard\model_comparison_8_models.py:616:    train_data,
+  dashboard\model_comparison_8_models.py:617:    test_data
+  dashboard\model_comparison_8_models.py:622:
+> dashboard\model_comparison_8_models.py:623:    model = IsolationForest(
+  dashboard\model_comparison_8_models.py:624:        n_estimators=200,
+  dashboard\model_comparison_8_models.py:625:        contamination=ANOMALY_CONTAMINATION,
+  dashboard\model_comparison_8_models.py:654:    train_data["anomaly_signal"] = (
+> dashboard\model_comparison_8_models.py:655:        model.predict(
+  dashboard\model_comparison_8_models.py:656:            X_train
+  dashboard\model_comparison_8_models.py:657:        ) == -1
+  dashboard\model_comparison_8_models.py:660:    test_data["anomaly_signal"] = (
+> dashboard\model_comparison_8_models.py:661:        model.predict(
+  dashboard\model_comparison_8_models.py:662:            X_test
+  dashboard\model_comparison_8_models.py:663:        ) == -1
+  dashboard\model_comparison_8_models.py:673:# ============================================================
+> dashboard\model_comparison_8_models.py:674:# DBSCAN + LOCAL SPATIAL DENSITY
+  dashboard\model_comparison_8_models.py:675:# ============================================================
+  dashboard\model_comparison_8_models.py:676:
+> dashboard\model_comparison_8_models.py:677:def add_spatial_signal(
+  dashboard\model_comparison_8_models.py:678:    train_data,
+  dashboard\model_comparison_8_models.py:679:    test_data
+  dashboard\model_comparison_8_models.py:687:      1. One centroid is retained for each unique training beat.
+> dashboard\model_comparison_8_models.py:688:      2. DBSCAN describes the spatial clustering structure.
+  dashboard\model_comparison_8_models.py:689:      3. Mean distance to the k nearest OTHER training beats measures
+  dashboard\model_comparison_8_models.py:690:         local geographic density.
+  dashboard\model_comparison_8_models.py:691:      4. The density is converted to a percentile/rank score using only
+> dashboard\model_comparison_8_models.py:692:         the training beats. Smaller neighbour distance => higher score.
+  dashboard\model_comparison_8_models.py:693:      5. Known test beats inherit their training-derived spatial score.
+  dashboard\model_comparison_8_models.py:694:         An unseen test beat is assigned the score of its nearest training
+  dashboard\model_comparison_8_models.py:697:    A rank transformation is used instead of a p05-p95 min-max transform.
+> dashboard\model_comparison_8_models.py:698:    This avoids the previous failure mode where a highly concentrated
+  dashboard\model_comparison_8_models.py:699:    density distribution collapsed to the same clipped value.
+  dashboard\model_comparison_8_models.py:700:    """
+  dashboard\model_comparison_8_models.py:749:    # --------------------------------------------------------
+> dashboard\model_comparison_8_models.py:750:    # 2. DBSCAN spatial structure
+  dashboard\model_comparison_8_models.py:751:    # --------------------------------------------------------
+> dashboard\model_comparison_8_models.py:752:    dbscan = DBSCAN(
+  dashboard\model_comparison_8_models.py:753:        eps=SPATIAL_EPS,
+  dashboard\model_comparison_8_models.py:754:        min_samples=SPATIAL_MIN_SAMPLES
+  dashboard\model_comparison_8_models.py:755:    )
+> dashboard\model_comparison_8_models.py:756:    dbscan.fit(train_coordinates)
+  dashboard\model_comparison_8_models.py:757:
+> dashboard\model_comparison_8_models.py:758:    train_labels = np.asarray(dbscan.labels_)
+  dashboard\model_comparison_8_models.py:759:    non_noise = train_labels[train_labels != -1]
+  dashboard\model_comparison_8_models.py:760:    clusters = (
+  dashboard\model_comparison_8_models.py:809:    # Smaller neighbour distance means denser local geography and
+therefore
+> dashboard\model_comparison_8_models.py:810:    # higher spatial evidence. Rank is robust to extreme coordinate
+spacing.
+  dashboard\model_comparison_8_models.py:811:    density_percentile = pd.Series(
+  dashboard\model_comparison_8_models.py:812:        mean_neighbor_distance
+  dashboard\model_comparison_8_models.py:819:
+> dashboard\model_comparison_8_models.py:820:    # DBSCAN spatial structure:
+  dashboard\model_comparison_8_models.py:821:    # non-noise beats belong to a detected geographic cluster,
+> dashboard\model_comparison_8_models.py:822:    # while DBSCAN noise points receive zero cluster support.
+  dashboard\model_comparison_8_models.py:823:    cluster_signal = (
+  dashboard\model_comparison_8_models.py:824:        train_labels != -1
+  dashboard\model_comparison_8_models.py:826:
+> dashboard\model_comparison_8_models.py:827:    # Combine continuous geographic density with DBSCAN cluster support.
+  dashboard\model_comparison_8_models.py:828:    # This is an experimental spatial-evidence formulation.
+  dashboard\model_comparison_8_models.py:829:    beat_signal = (
+  dashboard\model_comparison_8_models.py:850:
+> dashboard\model_comparison_8_models.py:851:    train_beats["dbscan_label"] = train_labels
+  dashboard\model_comparison_8_models.py:852:    train_beats["mean_neighbor_distance"] = mean_neighbor_distance
+  dashboard\model_comparison_8_models.py:853:    train_beats["spatial_signal"] = beat_signal
+  dashboard\model_comparison_8_models.py:953:    print(f"  Unique training beats : {stats['unique_training_beats']:,}")
+> dashboard\model_comparison_8_models.py:954:    print(f"  DBSCAN clusters       : {stats['clusters']}")
+> dashboard\model_comparison_8_models.py:955:    print(f"  DBSCAN noise rate     : {stats['noise_rate']:.4f}")
+  dashboard\model_comparison_8_models.py:956:    print(
+  dashboard\model_comparison_8_models.py:957:        f"  Cluster-supported beats: {stats['cluster_supported_beats']:,}
+"
+  dashboard\model_comparison_8_models.py:987:        test_data,
+> dashboard\model_comparison_8_models.py:988:        dbscan,
+  dashboard\model_comparison_8_models.py:989:        stats
+  dashboard\model_comparison_8_models.py:990:    )
+  dashboard\model_comparison_8_models.py:996:
+> dashboard\model_comparison_8_models.py:997:def calculate_metrics(
+  dashboard\model_comparison_8_models.py:998:    y_true,
+  dashboard\model_comparison_8_models.py:999:    y_pred,
+  dashboard\model_comparison_8_models.py:1114:
+> dashboard\model_comparison_8_models.py:1115:def calculate_balanced_sample_weights(y):
+  dashboard\model_comparison_8_models.py:1116:
+  dashboard\model_comparison_8_models.py:1117:    y = np.asarray(y)
+  dashboard\model_comparison_8_models.py:1148:
+> dashboard\model_comparison_8_models.py:1149:def train_baseline_models(
+  dashboard\model_comparison_8_models.py:1150:    X_train,
+  dashboard\model_comparison_8_models.py:1151:    y_train
+  dashboard\model_comparison_8_models.py:1381:
+> dashboard\model_comparison_8_models.py:1382:def evaluate_baseline_models(
+  dashboard\model_comparison_8_models.py:1383:    models,
+  dashboard\model_comparison_8_models.py:1384:    X_test,
+  dashboard\model_comparison_8_models.py:1395:
+> dashboard\model_comparison_8_models.py:1396:        y_pred = model.predict(
+  dashboard\model_comparison_8_models.py:1397:            X_test
+  dashboard\model_comparison_8_models.py:1398:        )
+  dashboard\model_comparison_8_models.py:1400:        y_probability = (
+> dashboard\model_comparison_8_models.py:1401:            model.predict_proba(
+  dashboard\model_comparison_8_models.py:1402:                X_test
+  dashboard\model_comparison_8_models.py:1403:            )[:, 1]
+  dashboard\model_comparison_8_models.py:1430:
+> dashboard\model_comparison_8_models.py:1431:def run_garuda_hybrid(
+  dashboard\model_comparison_8_models.py:1432:    train_data,
+  dashboard\model_comparison_8_models.py:1433:    test_data
+  dashboard\model_comparison_8_models.py:1469:    # --------------------------------------------------------
+> dashboard\model_comparison_8_models.py:1470:    # 3. DBSCAN + spatial evidence
+  dashboard\model_comparison_8_models.py:1471:    # --------------------------------------------------------
+  dashboard\model_comparison_8_models.py:1472:
+  dashboard\model_comparison_8_models.py:1495:    y_train = train_garuda[
+> dashboard\model_comparison_8_models.py:1496:        "high_risk"
+  dashboard\model_comparison_8_models.py:1497:    ]
+  dashboard\model_comparison_8_models.py:1498:
+  dashboard\model_comparison_8_models.py:1499:    y_test = test_garuda[
+> dashboard\model_comparison_8_models.py:1500:        "high_risk"
+  dashboard\model_comparison_8_models.py:1501:    ]
+  dashboard\model_comparison_8_models.py:1502:
+  dashboard\model_comparison_8_models.py:1530:    ml_probability = (
+> dashboard\model_comparison_8_models.py:1531:        ml_model.predict_proba(
+  dashboard\model_comparison_8_models.py:1532:            X_test
+  dashboard\model_comparison_8_models.py:1533:        )[:, 1]
+  dashboard\model_comparison_8_models.py:1571:    # core prediction features. This additional guard protects
+> dashboard\model_comparison_8_models.py:1572:    # the consensus layer from any non-finite value generated
+  dashboard\model_comparison_8_models.py:1573:    # by a model or numerical spatial-density calculation.
+  dashboard\model_comparison_8_models.py:1574:    #
+  dashboard\model_comparison_8_models.py:1575:    # For a probability/signal, non-finite values are mapped to
+> dashboard\model_comparison_8_models.py:1576:    # the neutral lower-bound value 0.0 before consensus.
+  dashboard\model_comparison_8_models.py:1577:    # This keeps ROC-AUC, PR-AUC and Log Loss computable while
+  dashboard\model_comparison_8_models.py:1578:    # preserving the defined 0-to-1 signal range.
+  dashboard\model_comparison_8_models.py:1631:    # --------------------------------------------------------
+> dashboard\model_comparison_8_models.py:1632:    # 6. GARUDA consensus layer
+  dashboard\model_comparison_8_models.py:1633:    #
+  dashboard\model_comparison_8_models.py:1634:    # Experimental weights defined by the project:
+  dashboard\model_comparison_8_models.py:1641:
+> dashboard\model_comparison_8_models.py:1642:    consensus_score = (
+  dashboard\model_comparison_8_models.py:1643:        0.40 * ml_probability
+  dashboard\model_comparison_8_models.py:1644:        + 0.20 * temporal_signal
+  dashboard\model_comparison_8_models.py:1648:
+> dashboard\model_comparison_8_models.py:1649:    consensus_score = np.clip(
+> dashboard\model_comparison_8_models.py:1650:        consensus_score,
+  dashboard\model_comparison_8_models.py:1651:        0.0,
+  dashboard\model_comparison_8_models.py:1652:        1.0
+  dashboard\model_comparison_8_models.py:1655:    print(
+> dashboard\model_comparison_8_models.py:1656:        "  Consensus: "
+> dashboard\model_comparison_8_models.py:1657:        f"min={np.min(consensus_score):.4f}, "
+> dashboard\model_comparison_8_models.py:1658:        f"mean={np.mean(consensus_score):.4f}, "
+> dashboard\model_comparison_8_models.py:1659:        f"max={np.max(consensus_score):.4f}, "
+> dashboard\model_comparison_8_models.py:1660:        f"p95={np.percentile(consensus_score, 95):.4f}, "
+> dashboard\model_comparison_8_models.py:1661:        f">=0.66={int(np.sum(consensus_score >= 0.66))}"
+  dashboard\model_comparison_8_models.py:1662:    )
+  dashboard\model_comparison_8_models.py:1663:
+> dashboard\model_comparison_8_models.py:1664:    # The target represents HIGH risk.
+> dashboard\model_comparison_8_models.py:1665:    # GARUDA's defined HIGH threshold is >= 0.66.
+  dashboard\model_comparison_8_models.py:1666:    garuda_prediction = (
+> dashboard\model_comparison_8_models.py:1667:        consensus_score >= 0.66
+  dashboard\model_comparison_8_models.py:1668:    ).astype(int)
+  dashboard\model_comparison_8_models.py:1669:
+  dashboard\model_comparison_8_models.py:1673:            garuda_prediction,
+> dashboard\model_comparison_8_models.py:1674:            consensus_score
+  dashboard\model_comparison_8_models.py:1675:        )
+  dashboard\model_comparison_8_models.py:1676:    )
+  dashboard\model_comparison_8_models.py:1704:
+> dashboard\model_comparison_8_models.py:1705:            "low_threshold": 0.33,
+  dashboard\model_comparison_8_models.py:1706:
+> dashboard\model_comparison_8_models.py:1707:            "high_threshold": 0.66,
+  dashboard\model_comparison_8_models.py:1708:
+  dashboard\model_comparison_8_models.py:1709:            "scale_pos_weight":
+  dashboard\model_comparison_8_models.py:1751:
+> dashboard\model_comparison_8_models.py:1752:            "mean_consensus_score":
+  dashboard\model_comparison_8_models.py:1753:                float(
+  dashboard\model_comparison_8_models.py:1754:                    np.mean(
+> dashboard\model_comparison_8_models.py:1755:                        consensus_score
+  dashboard\model_comparison_8_models.py:1756:                    )
+  dashboard\model_comparison_8_models.py:1757:                ),
+  dashboard\model_comparison_8_models.py:1758:
+> dashboard\model_comparison_8_models.py:1759:            "min_consensus_score":
+> dashboard\model_comparison_8_models.py:1760:                float(np.min(consensus_score)),
+  dashboard\model_comparison_8_models.py:1761:
+> dashboard\model_comparison_8_models.py:1762:            "max_consensus_score":
+> dashboard\model_comparison_8_models.py:1763:                float(np.max(consensus_score)),
+  dashboard\model_comparison_8_models.py:1764:
+> dashboard\model_comparison_8_models.py:1765:            "p95_consensus_score":
+> dashboard\model_comparison_8_models.py:1766:                float(np.percentile(consensus_score, 95)),
+  dashboard\model_comparison_8_models.py:1767:
+> dashboard\model_comparison_8_models.py:1768:            "high_risk_predictions":
+  dashboard\model_comparison_8_models.py:1769:                int(np.sum(garuda_prediction == 1)),
+  dashboard\model_comparison_8_models.py:1770:
+  dashboard\model_comparison_8_models.py:1771:            "test_rows":
+> dashboard\model_comparison_8_models.py:1772:                int(len(consensus_score))
+  dashboard\model_comparison_8_models.py:1773:        }
+  dashboard\model_comparison_8_models.py:1774:    }
+  dashboard\model_comparison_8_models.py:1788:
+> dashboard\model_comparison_8_models.py:1789:def save_results(
+  dashboard\model_comparison_8_models.py:1790:    all_results,
+  dashboard\model_comparison_8_models.py:1791:    train_data,
+  dashboard\model_comparison_8_models.py:1990:            train_data[
+> dashboard\model_comparison_8_models.py:1991:                "high_risk"
+  dashboard\model_comparison_8_models.py:1992:            ]
+  dashboard\model_comparison_8_models.py:1993:            .value_counts()
+  dashboard\model_comparison_8_models.py:1998:            test_data[
+> dashboard\model_comparison_8_models.py:1999:                "high_risk"
+  dashboard\model_comparison_8_models.py:2000:            ]
+  dashboard\model_comparison_8_models.py:2001:            .value_counts()
+  dashboard\model_comparison_8_models.py:2035:
+> dashboard\model_comparison_8_models.py:2036:def create_metric_chart(
+  dashboard\model_comparison_8_models.py:2037:    comparison
+  dashboard\model_comparison_8_models.py:2038:):
+  dashboard\model_comparison_8_models.py:2117:
+> dashboard\model_comparison_8_models.py:2118:def print_final_table(
+  dashboard\model_comparison_8_models.py:2119:    comparison
+  dashboard\model_comparison_8_models.py:2120:):
+  dashboard\model_comparison_8_models.py:2162:
+> dashboard\model_comparison_8_models.py:2163:def main():
+  dashboard\model_comparison_8_models.py:2164:
+  dashboard\model_comparison_8_models.py:2165:    # --------------------------------------------------------
+  dashboard\model_comparison_8_models.py:2190:    y_train = train_data[
+> dashboard\model_comparison_8_models.py:2191:        "high_risk"
+  dashboard\model_comparison_8_models.py:2192:    ]
+  dashboard\model_comparison_8_models.py:2193:
+  dashboard\model_comparison_8_models.py:2198:    y_test = test_data[
+> dashboard\model_comparison_8_models.py:2199:        "high_risk"
+  dashboard\model_comparison_8_models.py:2200:    ]
+  dashboard\model_comparison_8_models.py:2201:

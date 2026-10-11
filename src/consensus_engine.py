@@ -108,15 +108,21 @@ def calculate_consensus_dataframe(df):
         .clip(0, 1)
     )
 
-    result["risk_level"] = pd.cut(
-        result["consensus_score"],
-        bins=[-0.001, 0.33, 0.66, 1.0],
-        labels=[
-            "LOW",
-            "MEDIUM",
-            "HIGH"
-        ]
-    )
+    result["risk_level"] = pd.Series(
+    "MEDIUM",
+    index=result.index,
+    dtype="object"
+   )
+
+    result.loc[
+    result["consensus_score"] < 0.33,
+    "risk_level"
+    ] = "LOW"
+
+    result.loc[
+    result["consensus_score"] >= 0.66,
+    "risk_level"
+    ] = "HIGH"
 
     return result
 

@@ -1,0 +1,27 @@
+{
+  "protocol": "strict_target_date_holdout",
+  "cutoff": "2025-03-08",
+  "weights": {
+    "ml": 0.4,
+    "temporal": 0.2,
+    "anomaly": 0.2,
+    "spatial": 0.2
+  },
+  "default_threshold": 0.66,
+  "seeds": [
+    42,
+    52,
+    62,
+    72,
+    82
+  ],
+  "outputs": [
+    "strict_split_audit.json",
+    "strict_model_comparison.csv",
+    "strict_threshold_sensitivity.csv",
+    "strict_ablation_e1_e8.csv",
+    "strict_repeated_seed_raw.csv",
+    "strict_repeated_seed_summary.csv"
+  ],
+  "historical_outputs_overwritten": false
+}

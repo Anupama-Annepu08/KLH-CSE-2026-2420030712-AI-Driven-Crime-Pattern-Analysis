@@ -165,6 +165,10 @@ def create_crime_features(df):
         (result["hour"] >= 22)
     ).astype(int)
 
+    # Aggregate crimes by calendar day, not exact timestamp.
+    # The hour feature has already been extracted and is preserved.
+    result["crime_date"] = result["crime_date"].dt.normalize()
+
     # --------------------------------------------------------
     # Daily beat-level aggregation
     # --------------------------------------------------------
@@ -531,6 +535,19 @@ def add_spatial_signal(
     eps=0.002,
     min_samples=10
 ):
+    """
+    Generate spatial-support signals using DBSCAN.
+
+    DBSCAN is fitted only on valid training coordinates.
+    Test rows receive spatial support when they fall within
+    eps of a training core sample.
+
+    Returns:
+        train_df, test_df, fitted_dbscan_model
+
+    If no valid training coordinates exist, the model returned
+    is None and all spatial signals remain zero.
+    """
 
     train_df = train_df.copy()
     test_df = test_df.copy()
@@ -540,288 +557,185 @@ def add_spatial_signal(
         "avg_longitude"
     ]
 
+    # Ensure the expected coordinate columns exist.
+    for column in coordinate_columns:
+        if column not in train_df.columns:
+            train_df[column] = np.nan
+
+        if column not in test_df.columns:
+            test_df[column] = np.nan
+
     train_coordinates = (
-        train_df[
-            coordinate_columns
-        ]
-        .apply(
-            pd.to_numeric,
-            errors="coerce"
-        )
+        train_df[coordinate_columns]
+        .apply(pd.to_numeric, errors="coerce")
     )
 
     test_coordinates = (
-        test_df[
-            coordinate_columns
-        ]
-        .apply(
-            pd.to_numeric,
-            errors="coerce"
-        )
+        test_df[coordinate_columns]
+        .apply(pd.to_numeric, errors="coerce")
     )
 
-    train_valid = (
-        train_coordinates
-        .notna()
-        .all(axis=1)
+    # Reject invalid coordinates, including infinity.
+    train_coordinates = train_coordinates.replace(
+        [np.inf, -np.inf], np.nan
+    )
+    test_coordinates = test_coordinates.replace(
+        [np.inf, -np.inf], np.nan
     )
 
-    test_valid = (
-        test_coordinates
-        .notna()
-        .all(axis=1)
-    )
+    train_valid = train_coordinates.notna().all(axis=1)
+    test_valid = test_coordinates.notna().all(axis=1)
 
+    # Unknown/missing locations default to no spatial support.
     train_df["spatial_signal"] = 0
     test_df["spatial_signal"] = 0
 
-    valid_train = (
-        train_coordinates
-        .loc[train_valid]
-        .to_numpy()
-    )
+    valid_train = train_coordinates.loc[train_valid].to_numpy()
 
     if len(valid_train) == 0:
-
-        return (
-            train_df,
-            test_df,
-            {
-                "n_clusters": 0,
-                "noise_count": 0,
-                "noise_rate": 1.0,
-                "train_signal_rate": 0.0,
-                "test_signal_rate": 0.0,
-                "eps": float(eps),
-                "min_samples": int(min_samples)
-            }
+        print(
+            "WARNING: No valid training coordinates. "
+            "Spatial signals remain zero."
         )
+        return train_df, test_df, None
 
     dbscan = DBSCAN(
         eps=eps,
         min_samples=min_samples
     )
 
-    dbscan.fit(
-        valid_train
-    )
+    dbscan.fit(valid_train)
 
     # --------------------------------------------------------
-    # Training signal
+    # Training signals
     # --------------------------------------------------------
 
-    train_labels = dbscan.labels_
+    train_indices = train_coordinates.index[train_valid]
 
-    train_indices = (
-        train_df.index[
-            train_valid
-        ]
-    )
-
-    train_df.loc[
-        train_indices,
-        "spatial_signal"
-    ] = (
-        train_labels != -1
+    train_df.loc[train_indices, "spatial_signal"] = (
+        dbscan.labels_ != -1
     ).astype(int)
 
     # --------------------------------------------------------
-    # Test signal
+    # Test signals
     # --------------------------------------------------------
+    # DBSCAN has no native predict() method. Use training core
+    # samples only to determine whether a test point has support.
+    # Test coordinates are never used to fit DBSCAN.
 
-    core_samples = (
-        dbscan.components_
-    )
+    core_samples = dbscan.components_
 
-    valid_test = (
-        test_coordinates
-        .loc[test_valid]
-        .to_numpy()
-    )
+    valid_test = test_coordinates.loc[test_valid].to_numpy()
+    test_indices = test_coordinates.index[test_valid]
 
-    test_indices = (
-        test_df.index[
-            test_valid
-        ]
-    )
-
-    for position, point in enumerate(
-        valid_test
-    ):
-
-        if len(core_samples) == 0:
-            break
-
-        distances = np.sqrt(
-            np.sum(
-                (
-                    core_samples
-                    -
-                    point
-                ) ** 2,
-                axis=1
+    if len(core_samples) > 0:
+        for position, point in enumerate(valid_test):
+            distances = np.sqrt(
+                np.sum((core_samples - point) ** 2, axis=1)
             )
-        )
 
-        if np.any(
-            distances <= eps
-        ):
-
-            test_df.loc[
-                test_indices[position],
-                "spatial_signal"
-            ] = 1
+            if np.any(distances <= eps):
+                test_df.loc[
+                    test_indices[position],
+                    "spatial_signal"
+                ] = 1
 
     # --------------------------------------------------------
-    # Statistics
+    # Diagnostics
     # --------------------------------------------------------
 
     labels = dbscan.labels_
-
-    non_noise = labels[
-        labels != -1
-    ]
+    non_noise_labels = labels[labels != -1]
 
     n_clusters = (
-        len(
-            np.unique(
-                non_noise
-            )
-        )
-        if len(non_noise) > 0
+        len(np.unique(non_noise_labels))
+        if len(non_noise_labels) > 0
         else 0
     )
 
-    noise_count = int(
-        np.sum(
-            labels == -1
-        )
-    )
-
     noise_rate = (
-
-        noise_count / len(labels)
-
+        float(np.mean(labels == -1))
         if len(labels) > 0
-
-        else 1.0
+        else 0.0
     )
 
-    spatial_stats = {
-
-        "n_clusters":
-            int(n_clusters),
-
-        "noise_count":
-            noise_count,
-
-        "noise_rate":
-            float(noise_rate),
-
-        "train_signal_rate":
-            float(
-                train_df[
-                    "spatial_signal"
-                ].mean()
-            ),
-
-        "test_signal_rate":
-            float(
-                test_df[
-                    "spatial_signal"
-                ].mean()
-            ),
-
-        "eps":
-            float(eps),
-
-        "min_samples":
-            int(min_samples)
-    }
-
-    return (
-        train_df,
-        test_df,
-        spatial_stats
+    print("\n" + "=" * 60)
+    print("DBSCAN SPATIAL SIGNAL")
+    print("=" * 60)
+    print("DBSCAN eps:", eps)
+    print("DBSCAN min_samples:", min_samples)
+    print("Training rows:", len(train_df))
+    print("Testing rows:", len(test_df))
+    print("Valid training coordinates:", int(train_valid.sum()))
+    print("Valid testing coordinates:", int(test_valid.sum()))
+    print("Training clusters:", n_clusters)
+    print("Training noise rate:", round(noise_rate, 4))
+    print(
+        "Training spatial signal rate:",
+        round(float(train_df["spatial_signal"].mean()), 4)
     )
-    
-    def get_spatial_statistics(train_data, test_data, spatial_model):
-    
+    print(
+        "Testing spatial signal rate:",
+        round(float(test_df["spatial_signal"].mean()), 4)
+    )
+    print("=" * 60)
 
-        train_signal = train_data.get(
-        "spatial_signal",
-        pd.Series(dtype=float)
-        )
+    # IMPORTANT: return the fitted DBSCAN model, not a statistics dict.
+    return train_df, test_df, dbscan
 
-        test_signal = test_data.get(
-        "spatial_signal",
-        pd.Series(dtype=float)
-        )
 
-        labels = getattr(
-        spatial_model,
-        "labels_",
-        None
-        )
+# ============================================================
+# SPATIAL STATISTICS
+# ============================================================
 
-    if labels is not None and len(labels) > 0:
+def get_spatial_statistics(
+    train_data,
+    test_data,
+    spatial_model
+):
+    """
+    Summarize spatial signals and fitted training DBSCAN results.
 
-        unique_labels = set(labels)
+    The returned keys match those consumed by model_training.py.
+    """
 
-        train_clusters = len(
-            unique_labels - {-1}
-        )
-
-        train_noise_rate = float(
-            (labels == -1).mean()
-        )
-
-    else:
-
-        train_clusters = 0
-        train_noise_rate = 0.0
-
-    return {
-        "train_spatial_signal_rate": float(
-            train_signal.mean()
-        ) if len(train_signal) else 0.0,
-
-        "test_spatial_signal_rate": float(
-            test_signal.mean()
-        ) if len(test_signal) else 0.0,
-
-        "train_clusters": int(
-            train_clusters
-        ),
-
-        "train_noise_rate": float(
-            train_noise_rate
-        ),
-    }
-def get_spatial_statistics(train_data, test_data, spatial_model):
     train_signal = train_data.get(
         "spatial_signal",
-        pd.Series(dtype=float)
+        pd.Series(0, index=train_data.index, dtype=float)
     )
 
     test_signal = test_data.get(
         "spatial_signal",
-        pd.Series(dtype=float)
+        pd.Series(0, index=test_data.index, dtype=float)
     )
 
     labels = getattr(spatial_model, "labels_", None)
 
     if labels is not None and len(labels) > 0:
-        unique_labels = set(labels)
-        train_clusters = len(unique_labels - {-1})
-        train_noise_rate = float((labels == -1).mean())
+        non_noise_labels = labels[labels != -1]
+
+        train_clusters = (
+            len(np.unique(non_noise_labels))
+            if len(non_noise_labels) > 0
+            else 0
+        )
+
+        train_noise_rate = float(np.mean(labels == -1))
     else:
         train_clusters = 0
         train_noise_rate = 0.0
 
     return {
-        "train_spatial_signal_rate": float(train_signal.mean()) if len(train_signal) else 0.0,
-        "test_spatial_signal_rate": float(test_signal.mean()) if len(test_signal) else 0.0,
+        "train_spatial_signal_rate": (
+            float(train_signal.mean())
+            if len(train_signal)
+            else 0.0
+        ),
+        "test_spatial_signal_rate": (
+            float(test_signal.mean())
+            if len(test_signal)
+            else 0.0
+        ),
         "train_clusters": int(train_clusters),
         "train_noise_rate": float(train_noise_rate),
     }

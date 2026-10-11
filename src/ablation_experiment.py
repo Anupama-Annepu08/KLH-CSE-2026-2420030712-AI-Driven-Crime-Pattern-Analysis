@@ -84,9 +84,8 @@ DATA_PATH = (
 
 
 
-RESULTS_DIR = PROJECT_ROOT / "results"
-
-MODELS_DIR = PROJECT_ROOT / "models"
+RESULTS_DIR = PROJECT_ROOT / "results_spatial_corrected"
+MODELS_DIR = PROJECT_ROOT / "models_spatial_corrected"
 
 
 
@@ -558,69 +557,13 @@ def load_and_engineer_data():
 
 
 
-    if spatial_source is not None and "beat" in df.columns:
-
-
-
-        if not spatial_columns_present:
-
-
-
-            df = df.merge(
-
-                spatial_source,
-
-                on="beat",
-
-                how="left"
-
-            )
-
-
-
+    # Preserve daily coordinates from the feature-engineering pipeline.
+    # Do not fill missing coordinates using full-period beat medians.
+    for column in SPATIAL_FEATURES:
+        if column not in df.columns:
+            df[column] = np.nan
         else:
-
-
-
-            # Existing coordinates are authoritative.
-
-            # Only fill missing coordinates from the stable
-
-            # beat-level reference.
-
-            spatial_lookup = spatial_source.set_index("beat")
-
-
-
-            for column in SPATIAL_FEATURES:
-
-
-
-                df[column] = pd.to_numeric(
-
-                    df[column],
-
-                    errors="coerce"
-
-                )
-
-
-
-                mapped_values = df["beat"].map(
-
-                    spatial_lookup[column]
-
-                )
-
-
-
-                df[column] = df[column].fillna(
-
-                    mapped_values
-
-                )
-
-
+            df[column] = pd.to_numeric(df[column], errors="coerce")
 
     # Final diagnostic before the common cohort.
 

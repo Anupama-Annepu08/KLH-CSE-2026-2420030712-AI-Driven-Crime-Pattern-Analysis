@@ -1,0 +1,50 @@
+{
+  "protocol": "strict_target_date_holdout",
+  "target_date_cutoff_inclusive_test": "2025-03-08",
+  "target_definition": "features observed on crime_date=t predict high_risk for target_date=t+1 day",
+  "rows_before_filtering": 22742,
+  "rows_after_filtering": 22194,
+  "rows_removed": 548,
+  "train_rows": 17536,
+  "test_rows": 4658,
+  "train_feature_date_start": "2025-01-02",
+  "train_feature_date_end": "2025-03-06",
+  "test_feature_date_start": "2025-03-07",
+  "test_feature_date_end": "2025-03-23",
+  "train_target_date_start": "2025-01-03",
+  "train_target_date_end": "2025-03-07",
+  "test_target_date_start": "2025-03-08",
+  "test_target_date_end": "2025-03-24",
+  "train_target_distribution": {
+    "0": 16153,
+    "1": 1383
+  },
+  "test_target_distribution": {
+    "0": 4283,
+    "1": 375
+  },
+  "shared_target_dates": 0,
+  "coordinate_missing_rows_in_engineered_data": 0,
+  "feature_columns": [
+    "daily_crime_count",
+    "violent_crime_count",
+    "crime_count_7d",
+    "crime_count_30d",
+    "temporal_consistency"
+  ],
+  "weights": {
+    "ml": 0.4,
+    "temporal": 0.2,
+    "anomaly": 0.2,
+    "spatial": 0.2
+  },
+  "default_consensus_threshold": 0.66,
+  "seeds": [
+    42,
+    52,
+    62,
+    72,
+    82
+  ],
+  "note": "The source loader attaches beat-level median coordinates from raw rows across the dataset. Coordinates are treated as static geographic metadata; this assumption must be documented and checked before claiming strict inductive spatial evaluation."
+}

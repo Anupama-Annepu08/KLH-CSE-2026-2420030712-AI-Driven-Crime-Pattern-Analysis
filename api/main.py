@@ -290,6 +290,45 @@ def chicago_summary():
     return response
 
 
+@app.get("/chicago/analysis")
+def chicago_analysis():
+    """Aggregate descriptive statistics from the complete loaded Chicago snapshot."""
+    df = load_chicago_data()
+    result = {"status": "success", "source": "Local Chicago crime dataset", "total_records": int(len(df))}
+
+    if "primary_type" in df.columns:
+        categories = (df["primary_type"].dropna().astype(str).str.strip()
+                      .replace("", pd.NA).dropna().value_counts().head(12))
+        result["crime_categories"] = [
+            {"category": str(name), "count": int(count)}
+            for name, count in categories.items()
+        ]
+    else:
+        result["crime_categories"] = []
+
+    if "beat" in df.columns:
+        beats = df["beat"].dropna().astype(str).value_counts().head(10)
+        result["top_beats"] = [
+            {"beat": str(name), "count": int(count)}
+            for name, count in beats.items()
+        ]
+    else:
+        result["top_beats"] = []
+
+    if "date" in df.columns:
+        dates = pd.to_datetime(df["date"], errors="coerce").dropna()
+        result["valid_dated_records"] = int(len(dates))
+        result["date_range"] = {
+            "start": dates.min().isoformat() if len(dates) else None,
+            "end": dates.max().isoformat() if len(dates) else None,
+        }
+    else:
+        result["valid_dated_records"] = 0
+        result["date_range"] = {"start": None, "end": None}
+
+    return result
+
+
 @app.get("/chicago/crimes")
 def chicago_crimes(
     limit: int = Query(500, ge=1, le=5000),

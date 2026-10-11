@@ -268,35 +268,13 @@ def load_and_engineer_data():
         .str.strip()
     )
 
-    # Some feature-engineering versions may already create columns with
-    # these names. Remove them before attaching the authoritative raw-data
-    # beat reference so pandas cannot silently create _x/_y columns.
-    df.drop(
-        columns=["avg_latitude", "avg_longitude", "beat_key"],
-        inplace=True,
-        errors="ignore"
-    )
-
-    spatial_lookup = spatial_source.set_index("beat_key")[[
-        "avg_latitude",
-        "avg_longitude"
-    ]]
-
-    df["avg_latitude"] = (
-        df["__beat_key"]
-        .map(spatial_lookup["avg_latitude"])
-    )
-
-    df["avg_longitude"] = (
-        df["__beat_key"]
-        .map(spatial_lookup["avg_longitude"])
-    )
-
-    df.drop(
-        columns=["__beat_key"],
-        inplace=True,
-        errors="ignore"
-    )
+    # Preserve daily coordinates created by feature engineering.
+    # Missing values are handled later using training-only references.
+    for column in ["avg_latitude", "avg_longitude"]:
+        if column not in df.columns:
+            df[column] = np.nan
+        else:
+            df[column] = pd.to_numeric(df[column], errors="coerce")
 
     coordinate_count = int(
         df[["avg_latitude", "avg_longitude"]]
